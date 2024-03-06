@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,11 +23,13 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final CartService cartService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, CartService cartService, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository userRepository, CartService cartService, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.cartService = cartService;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -42,11 +45,26 @@ public class UserService implements UserDetailsService {
                 .password(bCryptPasswordEncoder.encode(user.getPassword()))
                 .role(Role.ROLE_CUSTOMER)
                 .build();
+
         userRepository.save(newUser);
         Cart cart = Cart.builder()
                 .customer(newUser)
                 .build();
         cartService.save(cart);
         return newUser;
+    }
+
+    public User findUserByJwtToken(String jwt) {
+        String token = jwt.substring(7);
+        String username = jwtService.extractUsername(token);
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
     }
 }

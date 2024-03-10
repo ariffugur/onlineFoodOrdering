@@ -21,6 +21,8 @@ public class RestaurantController {
         this.restaurantService = restaurantService;
     }
 
+
+
     @PostMapping("/create")
     public ResponseEntity<Restaurant> createRestaurant(@RequestBody CreateRestaurantRequest restaurant, @RequestHeader("Authorization") String token) {
         Restaurant createdRestaurant = restaurantService.createRestaurant(restaurant, token);

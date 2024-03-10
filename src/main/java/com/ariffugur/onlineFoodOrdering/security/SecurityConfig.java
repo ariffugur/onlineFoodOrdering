@@ -47,34 +47,33 @@ public class SecurityConfig {
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(x -> x
                         .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                        .requestMatchers("/home/welcome/**").hasAnyRole("CUSTOMER")
-                        .requestMatchers("/restaurant/**").hasAnyRole("CUSTOMER")
+                        .requestMatchers("/home/welcome/**","/restaurant/**").hasAnyRole("CUSTOMER")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .csrf(AbstractHttpConfigurer::disable)
-                .cors(x -> x.configurationSource(corsConfigurationSource()));
+                .csrf(AbstractHttpConfigurer::disable);
+                //.cors(x -> x.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 
-    private CorsConfigurationSource corsConfigurationSource() {
-        return new CorsConfigurationSource() {
-            @Override
-            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                CorsConfiguration cfg = new CorsConfiguration();
-                cfg.setAllowedOrigins(Arrays.asList(
-                        "https://zosh-food.vercel.app/",
-                        "https://localhost:3000/"
-                ));
-                cfg.setAllowedMethods(Collections.singletonList("*"));
-                cfg.setAllowCredentials(true);
-                cfg.setAllowedHeaders(Collections.singletonList("*"));
-                cfg.setExposedHeaders(Arrays.asList("Authorization"));
-                cfg.setMaxAge(3600L);
-                return cfg;
-            }
-        };
-    }
+//    private CorsConfigurationSource corsConfigurationSource() {
+//        return new CorsConfigurationSource() {
+//            @Override
+//            public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+//                CorsConfiguration cfg = new CorsConfiguration();
+//                cfg.setAllowedOrigins(Arrays.asList(
+//                        "https://zosh-food.vercel.app/",
+//                        "https://localhost:3000/"
+//                ));
+//                cfg.setAllowedMethods(Collections.singletonList("*"));
+//                cfg.setAllowCredentials(true);
+//                cfg.setAllowedHeaders(Collections.singletonList("*"));
+//                cfg.setExposedHeaders(Arrays.asList("Authorization"));
+//                cfg.setMaxAge(3600L);
+//                return cfg;
+//            }
+//        };
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {

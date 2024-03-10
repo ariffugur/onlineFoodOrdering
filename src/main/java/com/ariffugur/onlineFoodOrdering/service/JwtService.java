@@ -47,7 +47,6 @@ public class JwtService {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
-
     }
 
     public Date extractExpiration(String token) {
@@ -67,6 +66,8 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
+
+
 
     private Key getKey() {
         byte[] bytes = Decoders.BASE64.decode(SECRET);

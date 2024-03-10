@@ -4,11 +4,6 @@ import com.ariffugur.onlineFoodOrdering.model.Cart;
 import com.ariffugur.onlineFoodOrdering.model.Role;
 import com.ariffugur.onlineFoodOrdering.model.User;
 import com.ariffugur.onlineFoodOrdering.repository.UserRepository;
-import com.ariffugur.onlineFoodOrdering.response.AuthResponse;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,6 +33,10 @@ public class UserService implements UserDetailsService {
         return user.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
+    public User findByUsername(String username) {
+        return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+    }
+
     public User createUser(User user) {
         User newUser = User.builder()
                 .fullName(user.getFullName())
@@ -56,9 +55,10 @@ public class UserService implements UserDetailsService {
 
     public User findUserByJwtToken(String jwt) {
         String token = jwt.substring(7);
-        String username = jwtService.extractUsername(token);
+        String username = jwtService.extractUsername(token );
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
+
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -67,4 +67,6 @@ public class UserService implements UserDetailsService {
     public User save(User user) {
         return userRepository.save(user);
     }
+
+
 }

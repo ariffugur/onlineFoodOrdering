@@ -3,9 +3,12 @@ package com.ariffugur.onlineFoodOrdering.service;
 import com.ariffugur.onlineFoodOrdering.dto.CreateRestaurantRequest;
 import com.ariffugur.onlineFoodOrdering.dto.RestaurantDto;
 import com.ariffugur.onlineFoodOrdering.model.Address;
+import com.ariffugur.onlineFoodOrdering.model.ContactInformation;
 import com.ariffugur.onlineFoodOrdering.model.Restaurant;
 import com.ariffugur.onlineFoodOrdering.model.User;
 import com.ariffugur.onlineFoodOrdering.repository.RestaurantRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,34 +16,36 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class RestaurantService {
     private final RestaurantRepository restaurantRepository;
     private final UserService userService;
-    private final AddressService addressService;
     private final JwtService jwtService;
+    private final AddressService addressService;
 
-    public RestaurantService(RestaurantRepository restaurantRepository, UserService userService, AddressService addressService, JwtService jwtService) {
+    public RestaurantService(RestaurantRepository restaurantRepository, UserService userService, JwtService jwtService, AddressService addressService) {
         this.restaurantRepository = restaurantRepository;
         this.userService = userService;
-        this.addressService = addressService;
         this.jwtService = jwtService;
+        this.addressService = addressService;
     }
 
     public Restaurant createRestaurant(CreateRestaurantRequest request, String jwt) {
-        Address address = addressService.save(request.address());
-        User user = extractUsername(jwt);
-        Restaurant restaurant = Restaurant.builder()
+        User user = userService.findUserByJwtToken(jwt);
+        Address address = addressService.createAddress(request.address());
+        log.info("User: " + user);
+        return Restaurant.builder()
                 .name(request.name())
-                .contactInformation(request.contactInformation())
-                .address(address)
                 .cuisineType(request.cuisineType())
                 .description(request.description())
                 .openingHours(request.openingHours())
-                .images(request.images())
-                .owner(user)
                 .registrationDate(LocalDateTime.now())
+                .contactInformation(request.contactInformation())
+                .owner(user)
+                .address(address)
+                .images(request.images())
                 .build();
-        return restaurantRepository.save(restaurant);
+
     }
 
     public Restaurant updateRestaurant(Long id, CreateRestaurantRequest request, String jwt) {

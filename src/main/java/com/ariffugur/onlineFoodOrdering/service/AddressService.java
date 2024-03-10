@@ -15,4 +15,14 @@ public class AddressService {
     public Address save(Address address) {
         return addressRepository.save(address);
     }
+
+    public static Address createAddress(Address address) {
+        return Address.builder()
+                .city(address.getCity())
+                .streetAddress(address.getStreetAddress())
+                .stateProvince(address.getStateProvince())
+                .postalCode(address.getPostalCode())
+                .country(address.getCountry())
+                .build();
+    }
 }

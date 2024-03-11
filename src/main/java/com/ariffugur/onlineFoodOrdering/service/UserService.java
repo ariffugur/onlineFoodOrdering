@@ -1,8 +1,6 @@
 package com.ariffugur.onlineFoodOrdering.service;
 
-import com.ariffugur.onlineFoodOrdering.model.Cart;
-import com.ariffugur.onlineFoodOrdering.model.Role;
-import com.ariffugur.onlineFoodOrdering.model.User;
+import com.ariffugur.onlineFoodOrdering.model.*;
 import com.ariffugur.onlineFoodOrdering.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,6 +35,12 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
+    public User addRestaurantToUser(String jwt, Restaurant restaurant) {
+        User user = findUserByJwtToken(jwt);
+        user.setRestaurant(restaurant);
+        return userRepository.save(user);
+    }
+
     public User createUser(User user) {
         User newUser = User.builder()
                 .fullName(user.getFullName())
@@ -55,7 +59,7 @@ public class UserService implements UserDetailsService {
 
     public User findUserByJwtToken(String jwt) {
         String token = jwt.substring(7);
-        String username = jwtService.extractUsername(token );
+        String username = jwtService.extractUsername(token);
         return userRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 
@@ -68,5 +72,8 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
-
+    public User addAdressToUser(User user, Address address) {
+        user.getAddresses().add(address);
+        return userRepository.save(user);
+    }
 }

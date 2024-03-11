@@ -34,6 +34,8 @@ public class User implements UserDetails {
     private List<RestaurantDto> favorites = new ArrayList<>();
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
+    private Restaurant restaurant;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

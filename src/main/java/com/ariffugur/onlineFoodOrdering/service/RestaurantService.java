@@ -9,6 +9,7 @@ import com.ariffugur.onlineFoodOrdering.model.User;
 import com.ariffugur.onlineFoodOrdering.repository.RestaurantRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,56 +31,61 @@ public class RestaurantService {
         this.addressService = addressService;
     }
 
-    public Restaurant createRestaurant(CreateRestaurantRequest request, String jwt) {
+    public Restaurant createRestaurant(CreateRestaurantRequest request, String jwt) throws Exception {
+        Address address = addressService.save(request.address());
         User user = userService.findUserByJwtToken(jwt);
-        Address address = addressService.createAddress(request.address());
-        log.info("User: " + user);
-        return Restaurant.builder()
+        Restaurant restaurant = Restaurant.builder()
                 .name(request.name())
                 .cuisineType(request.cuisineType())
                 .description(request.description())
                 .openingHours(request.openingHours())
-                .registrationDate(LocalDateTime.now())
                 .contactInformation(request.contactInformation())
+                .address(request.address())
                 .owner(user)
-                .address(address)
+                .registrationDate(LocalDateTime.now())
+                .open(true)
                 .images(request.images())
                 .build();
+        return restaurantRepository.save(restaurant);
+
 
     }
 
-    public Restaurant updateRestaurant(Long id, CreateRestaurantRequest request, String jwt) {
-        extractUsername(jwt);
-        Restaurant restaurant = restaurantRepository.findById(id).orElseThrow(() -> new RuntimeException("Restaurant not found"));
-        if (request.cuisineType() != null) {
-            restaurant.setCuisineType(request.cuisineType());
-        }
-        if (request.contactInformation() != null) {
-            restaurant.setContactInformation(request.contactInformation());
-        }
-        if (request.description() != null) {
-            restaurant.setDescription(request.description());
+    public Restaurant updateRestaurant(Long id, CreateRestaurantRequest request, String jwt) throws Exception {
+        User user = userService.findUserByJwtToken(jwt);
+        Restaurant restaurant = findRestaurantById(id);
+        if (restaurant == null) {
+            throw new Exception("User not authorized to update this restaurant");
         }
         if (request.name() != null) {
             restaurant.setName(request.name());
         }
+        if (request.cuisineType() != null) {
+            restaurant.setCuisineType(request.cuisineType());
+        }
+        if (request.description() != null) {
+            restaurant.setDescription(request.description());
+        }
         if (request.openingHours() != null) {
             restaurant.setOpeningHours(request.openingHours());
+        }
+        if (request.contactInformation() != null) {
+            restaurant.setContactInformation(request.contactInformation());
         }
         if (request.images() != null) {
             restaurant.setImages(request.images());
         }
         return restaurantRepository.save(restaurant);
-
     }
 
     public void deleteRestaurant(Long id) throws Exception {
-        Optional<Restaurant> restaurant = restaurantRepository.findById(id);
-        if (restaurant.isPresent()) {
-            restaurantRepository.delete(restaurant.get());
-        } else {
+        Restaurant restaurant = findRestaurantById(id);
+        try {
+            restaurantRepository.delete(restaurant);
+        } catch (Exception e) {
             throw new Exception("Restaurant not found");
         }
+
     }
 
     public List<Restaurant> getAllRestaurants() {
@@ -90,7 +96,7 @@ public class RestaurantService {
         return restaurantRepository.findBySearchQuery(query);
     }
 
-    public Restaurant findRestaurantById(Long id) throws Exception {
+    public Restaurant findRestaurantByUserId(Long id) throws Exception {
         Restaurant restaurant = restaurantRepository.findByOwnerId(id);
         if (restaurant != null) {
             return restaurant;
@@ -99,17 +105,8 @@ public class RestaurantService {
         }
     }
 
-    public Restaurant getRestaurantById(Long id) throws Exception {
-        Optional<Restaurant> restaurant = restaurantRepository.findById(id);
-        if (restaurant.isPresent()) {
-            return restaurant.get();
-        } else {
-            throw new Exception("Restaurant not found");
-        }
-    }
-
     public RestaurantDto addToFavorites(String jwt, Long id) throws Exception {
-        User user = extractUsername(jwt);
+        User user = userService.findUserByJwtToken(jwt);
         Restaurant restaurant = findRestaurantById(id);
         RestaurantDto restaurantDto = RestaurantDto.builder()
                 .description(restaurant.getDescription())
@@ -126,15 +123,15 @@ public class RestaurantService {
 
     }
 
-    public Restaurant updateRestaurantStatus(Long id) throws Exception {
+    public Restaurant findRestaurantById(Long id) {
+        return restaurantRepository.findById(id).orElseThrow(() -> new UsernameNotFoundException("Restaurant not found"));
+    }
+
+    public Restaurant updateRestaurantStatus(Long id, String jwt) throws Exception {
+        User user = userService.findUserByJwtToken(jwt);
         Restaurant restaurant = findRestaurantById(id);
         restaurant.setOpen(!restaurant.isOpen());
         return restaurantRepository.save(restaurant);
     }
 
-    public User extractUsername(String jwt) {
-        String token = jwt.substring(7);
-        String username = jwtService.extractUsername(token);
-        return userService.findUserByJwtToken(username);
-    }
 }

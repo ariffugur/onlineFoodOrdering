@@ -16,13 +16,15 @@ public class AddressService {
         return addressRepository.save(address);
     }
 
-    public static Address createAddress(Address address) {
-        return Address.builder()
-                .city(address.getCity())
-                .streetAddress(address.getStreetAddress())
-                .stateProvince(address.getStateProvince())
-                .postalCode(address.getPostalCode())
-                .country(address.getCountry())
-                .build();
+
+    public Address createAddress(Address request) {
+        Address address = new Address();
+        address.setStreetAddress(request.getStreetAddress());
+        address.setCity(request.getCity());
+        address.setStateProvince(request.getStateProvince());
+        address.setCountry(request.getCountry());
+        address.setPostalCode(request.getPostalCode());
+        return address;
     }
+
 }

@@ -22,46 +22,50 @@ public class RestaurantController {
     }
 
 
-
     @PostMapping("/create")
-    public ResponseEntity<Restaurant> createRestaurant(@RequestBody CreateRestaurantRequest restaurant, @RequestHeader("Authorization") String token) {
+    public ResponseEntity<Restaurant> createRestaurant(@RequestBody CreateRestaurantRequest restaurant, @RequestHeader("Authorization") String token) throws Exception {
         Restaurant createdRestaurant = restaurantService.createRestaurant(restaurant, token);
         return new ResponseEntity<>(createdRestaurant, HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Restaurant> updateRestaurant(@RequestBody CreateRestaurantRequest restaurant, @RequestHeader("Authorization") String token, @RequestParam Long id) {
+    public ResponseEntity<Restaurant> updateRestaurant(@RequestBody CreateRestaurantRequest restaurant, @RequestHeader("Authorization") String token, @PathVariable("id") Long id) throws Exception {
         Restaurant updateRestaurant = restaurantService.updateRestaurant(id, restaurant, token);
         return new ResponseEntity<>(updateRestaurant, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<MessageResponse> deleteRestaurant(@RequestHeader("Authorization") String token, @RequestParam Long id) throws Exception {
+    public ResponseEntity<MessageResponse> deleteRestaurant(@RequestHeader("Authorization") String token, @PathVariable("id") Long id) throws Exception {
         restaurantService.deleteRestaurant(id);
         MessageResponse messageResponse = MessageResponse.builder()
                 .message("Restaurant deleted successfully!").build();
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public List<Restaurant> getAllRestaurants(@RequestHeader("Authorization") String token) {
+        return restaurantService.getAllRestaurants();
+    }
+
     @PutMapping("/status/{id}")
-    public ResponseEntity<Restaurant> updateRestaurantStatus(@RequestParam Long id, @RequestHeader("Authorization") String token) throws Exception {
-        Restaurant restaurant = restaurantService.updateRestaurantStatus(id);
+    public ResponseEntity<Restaurant> updateRestaurantStatus(@RequestHeader("Authorization") String token, @PathVariable Long id) throws Exception {
+        Restaurant restaurant = restaurantService.updateRestaurantStatus(id,token);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
-    @GetMapping("/user")
-    public ResponseEntity<Restaurant> findRestaurantByUserId(@RequestHeader("Authorization") String token, @RequestParam Long id) throws Exception {
-        Restaurant restaurant = restaurantService.findRestaurantById(id);
+    @GetMapping("/user/{id}")
+    public ResponseEntity<Restaurant> findRestaurantByUserId(@RequestHeader("Authorization") String token, @PathVariable Long id) throws Exception {
+        Restaurant restaurant = restaurantService.findRestaurantByUserId(id);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<List<Restaurant>> searchRestaurants(@RequestHeader("Authorization") String token, @RequestParam String query) throws Exception {
+    @GetMapping("/search/{query}")
+    public ResponseEntity<List<Restaurant>> searchRestaurants(@RequestHeader("Authorization") String token, @PathVariable String query) throws Exception {
         List<Restaurant> restaurants = restaurantService.searchRestaurants(query);
         return new ResponseEntity<>(restaurants, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<Restaurant> findRestaurantById(@RequestHeader("Authorization") String token, @PathVariable Long id) throws Exception {
         Restaurant restaurant = restaurantService.findRestaurantById(id);
         return new ResponseEntity<>(restaurant, HttpStatus.OK);

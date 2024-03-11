@@ -21,7 +21,8 @@ public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User owner;
     private String name;
     private String description;
@@ -37,7 +38,7 @@ public class Restaurant {
     @Column(length = 1000)
     private List<String> images;
     private LocalDateTime registrationDate;
-    private boolean open;
+    private boolean open=false;
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<Food> foods = new ArrayList<>();

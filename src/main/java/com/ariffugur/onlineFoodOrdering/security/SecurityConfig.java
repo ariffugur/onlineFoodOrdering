@@ -47,12 +47,12 @@ public class SecurityConfig {
                 .sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(x -> x
                         .requestMatchers("/api/admin/**").hasAnyRole("RESTAURANT_OWNER", "ADMIN")
-                        .requestMatchers("/home/welcome/**","/restaurant/**").hasAnyRole("CUSTOMER")
+                        .requestMatchers("/home/welcome/**", "/restaurant/**", "/food/**").hasAnyRole("CUSTOMER")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable);
-                //.cors(x -> x.configurationSource(corsConfigurationSource()));
+        //.cors(x -> x.configurationSource(corsConfigurationSource()));
         return http.build();
     }
 

@@ -1,6 +1,7 @@
 package com.ariffugur.onlineFoodOrdering.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,12 +34,13 @@ public class Restaurant {
     private ContactInformation contactInformation;
     private String openingHours;
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
     @ElementCollection
     @Column(length = 1000)
     private List<String> images;
     private LocalDateTime registrationDate;
-    private boolean open=false;
+    private boolean open = false;
     @JsonIgnore
     @OneToMany(mappedBy = "restaurant", cascade = CascadeType.ALL)
     private List<Food> foods = new ArrayList<>();

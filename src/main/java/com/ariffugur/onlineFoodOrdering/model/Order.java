@@ -2,8 +2,10 @@ package com.ariffugur.onlineFoodOrdering.model;
 
 import com.ariffugur.onlineFoodOrdering.dto.RestaurantDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -14,6 +16,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Table(name = "orders")
 public class Order {
     @Id
@@ -21,8 +24,8 @@ public class Order {
     private Long id;
     @ManyToOne
     private User customer;
-    @JsonIgnore
     @ManyToOne
+    @JsonIgnoreProperties("orders")
     private Restaurant restaurant;
     private Long totalAmount;
     private String orderStatus;
@@ -32,7 +35,7 @@ public class Order {
     @OneToMany
     private List<OrderItem> items;
     private int totalItem;
-    private int totalPrice;
+    private Long totalPrice;
 
 
 }

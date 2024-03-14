@@ -36,6 +36,8 @@ public class User implements UserDetails {
     private List<Address> addresses = new ArrayList<>();
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL)
     private Restaurant restaurant;
+    @OneToOne
+    private Cart cart;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

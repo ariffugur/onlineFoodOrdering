@@ -31,7 +31,7 @@ public class CategoryService {
         return categoryRepository.save(newCategory);
     }
 
-    public List<Category> findCategoryByRestaurantId(String jwt, Category category) throws Exception {
+    public List<Category> findCategoryByRestaurantId(String jwt) throws Exception {
         User user = userService.findUserByJwtToken(jwt);
         Restaurant restaurant = restaurantService.findRestaurantById(user.getId());
         return categoryRepository.findByRestaurantId(restaurant.getId());
@@ -39,12 +39,4 @@ public class CategoryService {
 
     }
 
-    public Category findCategoryById(Long id) throws Exception {
-        Optional<Category> category = categoryRepository.findById(id);
-        if (category.isPresent()) {
-            return category.get();
-        } else {
-            throw new Exception("Category not found");
-        }
-    }
 }

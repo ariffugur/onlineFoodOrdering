@@ -34,8 +34,8 @@ public class FoodController {
         return new ResponseEntity<>(messageResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/findFoodById/{id}")
-    public ResponseEntity<Food> findFoodById(@RequestHeader("Authorization") String token, @RequestParam Long id) {
+    @GetMapping("/findfoodbyid/{id}")
+    public ResponseEntity<Food> findFoodById(@RequestHeader("Authorization") String token, @PathVariable Long id) {
         return new ResponseEntity<>(foodService.findFoodById(token, id), HttpStatus.OK);
     }
 

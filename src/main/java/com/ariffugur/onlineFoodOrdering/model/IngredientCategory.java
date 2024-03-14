@@ -1,5 +1,6 @@
 package com.ariffugur.onlineFoodOrdering.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class IngredientCategory {
     @JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
+    @JsonBackReference
     @OneToMany(mappedBy = "ingredientCategory", cascade = CascadeType.ALL)
     private List<IngredientsItem> ingredients = new ArrayList<>();
 }

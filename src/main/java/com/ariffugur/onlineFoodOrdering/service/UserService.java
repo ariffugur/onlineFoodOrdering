@@ -1,6 +1,7 @@
 package com.ariffugur.onlineFoodOrdering.service;
 
 import com.ariffugur.onlineFoodOrdering.model.*;
+import com.ariffugur.onlineFoodOrdering.repository.CartRepository;
 import com.ariffugur.onlineFoodOrdering.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,13 +15,13 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
-    private final CartService cartService;
+    private final CartRepository cartRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, CartService cartService, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
+    public UserService(UserRepository userRepository, CartRepository cartRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
-        this.cartService = cartService;
+        this.cartRepository = cartRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtService = jwtService;
     }
@@ -53,7 +54,7 @@ public class UserService implements UserDetailsService {
         Cart cart = Cart.builder()
                 .customer(newUser)
                 .build();
-        cartService.save(cart);
+        cartRepository.save(cart);
         return newUser;
     }
 

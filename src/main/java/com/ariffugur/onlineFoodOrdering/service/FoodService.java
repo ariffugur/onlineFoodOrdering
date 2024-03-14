@@ -1,19 +1,14 @@
 package com.ariffugur.onlineFoodOrdering.service;
 
 import com.ariffugur.onlineFoodOrdering.dto.CreateFoodRequest;
-import com.ariffugur.onlineFoodOrdering.model.Category;
-import com.ariffugur.onlineFoodOrdering.model.Food;
-import com.ariffugur.onlineFoodOrdering.model.Restaurant;
-import com.ariffugur.onlineFoodOrdering.model.User;
+import com.ariffugur.onlineFoodOrdering.model.*;
 import com.ariffugur.onlineFoodOrdering.repository.FoodRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Date;
 
 @Service
 public class FoodService {
@@ -21,28 +16,32 @@ public class FoodService {
     private final RestaurantService restaurantService;
     private final UserService userService;
     private final CategoryService categoryService;
+    private final IngredientsItemService ingredientsItemService;
 
-    public FoodService(FoodRepository foodRepository, RestaurantService restaurantService, UserService userService, CategoryService categoryService) {
+    public FoodService(FoodRepository foodRepository, RestaurantService restaurantService, UserService userService, CategoryService categoryService, IngredientsItemService ingredientsItemService) {
         this.foodRepository = foodRepository;
         this.restaurantService = restaurantService;
         this.userService = userService;
         this.categoryService = categoryService;
+        this.ingredientsItemService = ingredientsItemService;
     }
 
     public Food createFood(String jwt, CreateFoodRequest createFoodRequest) throws Exception {
         User user = userService.findUserByJwtToken(jwt);
         Restaurant restaurant = restaurantService.findRestaurantByUserId(user.getId());
-        Category category = categoryService.createRestaurantCategory(jwt, createFoodRequest.category());
+        Category category = categoryService.createRestaurantCategory(jwt, createFoodRequest.getCategory());
+        List<IngredientsItem> ingredientsItems = ingredientsItemService.saveInredientsItemList(createFoodRequest.getIngredients());
         Food food = Food.builder()
-                .name(createFoodRequest.name())
-                .price(createFoodRequest.price())
-                .description(createFoodRequest.description())
+                .name(createFoodRequest.getName())
+                .price(createFoodRequest.getPrice())
+                .description(createFoodRequest.getDescription())
                 .foodCategory(category)
-                .images(createFoodRequest.images())
+                .creationDate(new Date())
+                .images(createFoodRequest.getImages())
                 .restaurant(restaurant)
-                .isVegan(createFoodRequest.vegan())
-                .isSeasonal(createFoodRequest.seasonal())
-                .ingredients(createFoodRequest.ingredients())
+                .isVegan(createFoodRequest.isVegan())
+                .isSeasonal(createFoodRequest.isSeasonal())
+                .ingredients(ingredientsItems)
                 .build();
         Food savedFood = foodRepository.save(food);
         restaurant.getFoods().add(savedFood);

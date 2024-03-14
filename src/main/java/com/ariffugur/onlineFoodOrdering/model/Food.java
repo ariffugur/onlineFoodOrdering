@@ -1,5 +1,7 @@
 package com.ariffugur.onlineFoodOrdering.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,8 +36,6 @@ public class Food {
     private boolean isVegan;
     private boolean isSeasonal;
     @ManyToMany
-    private List<IngredientsItem> ingredients = new ArrayList<>();
+    private List<IngredientsItem> ingredients;
     private Date creationDate;
-
-
 }

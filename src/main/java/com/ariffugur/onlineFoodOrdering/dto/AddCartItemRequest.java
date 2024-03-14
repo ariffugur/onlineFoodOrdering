@@ -1,14 +1,19 @@
 package com.ariffugur.onlineFoodOrdering.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
 @Builder
-public record AddCartItemRequest(
-        Long foodId,
-        int quantity,
-        List<String> ingredients
-) {
+@NoArgsConstructor
+@AllArgsConstructor
+public class AddCartItemRequest {
+    private Long foodId;
+    private int quantity;
+    private List<String> ingredients;
 
 }

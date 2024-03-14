@@ -22,15 +22,15 @@ public class IngredientItemController {
 
     @PostMapping("/create")
     public ResponseEntity<IngredientsItem> createIngredient(@RequestHeader("Authorization") String token, @RequestBody IngredientItemRequest request) {
-        IngredientsItem ingredientItem = ingredientItemService.createIngredientsItem(request.name(), request.categoryId(), request.restaurantId());
-        return new ResponseEntity(ingredientItem, HttpStatus.CREATED);
+        IngredientsItem ingredientItem = ingredientItemService.createIngredientsItem(token,request.name(), request.categoryId(), request.restaurantId());
+        return new ResponseEntity<>(ingredientItem, HttpStatus.CREATED);
 
     }
 
     @PutMapping("/stock/{id}")
-    public ResponseEntity<IngredientsItem> updateIngredient(@RequestHeader("Authorization") String token, @RequestBody Long id) throws Exception {
-        IngredientsItem ingredientItem = ingredientItemService.updateStock(id);
-        return new ResponseEntity(ingredientItem, HttpStatus.OK);
+    public ResponseEntity<IngredientsItem> updateIngredient(@RequestHeader("Authorization") String token, @PathVariable Long id) throws Exception {
+        IngredientsItem ingredientItem = ingredientItemService.updateStock(token,id);
+        return new ResponseEntity<>(ingredientItem, HttpStatus.OK);
 
     }
 

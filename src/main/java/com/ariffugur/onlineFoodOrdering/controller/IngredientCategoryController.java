@@ -22,7 +22,7 @@ public class IngredientCategoryController {
     @PostMapping("/create")
     public ResponseEntity<IngredientCategory> createIngredientCategory(@RequestHeader("Authorization") String token, @RequestBody IngredientCategoryRequest request) {
         IngredientCategory ingredientCategory = ingredientCategoryService.createIngredientCategory(request.name(), request.restaurantId());
-        return new ResponseEntity(ingredientCategory, HttpStatus.CREATED);
+        return new ResponseEntity<>(ingredientCategory, HttpStatus.CREATED);
 
     }
     @GetMapping("/restaurant/{id}")

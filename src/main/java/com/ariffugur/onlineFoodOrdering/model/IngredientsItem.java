@@ -1,11 +1,15 @@
 package com.ariffugur.onlineFoodOrdering.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Entity
 @Data
@@ -19,9 +23,11 @@ public class IngredientsItem {
     private Long id;
     private String name;
     @ManyToOne
+    @JsonIgnoreProperties("ingredientCategory")
     private IngredientCategory ingredientCategory;
-    @JsonIgnore
+    //@JsonIgnore
     @ManyToOne
     private Restaurant restaurant;
-    private boolean inStoke=true;
+    private boolean inStock = true;
+
 }

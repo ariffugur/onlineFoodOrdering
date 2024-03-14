@@ -22,7 +22,8 @@ public class CategoryController {
     }
 
     @GetMapping("/getRestaurantCategory")
-    public List<Category> getRestaurantCategory(@RequestHeader("Authorization") String token, @RequestBody Category category) throws Exception {
-        return categoryService.findCategoryByRestaurantId(token, category);
+    public List<Category> getRestaurantCategory(@RequestHeader("Authorization") String token) throws Exception {
+        return categoryService.findCategoryByRestaurantId(token);
     }
+
 }

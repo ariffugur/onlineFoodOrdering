@@ -2,20 +2,25 @@ package com.ariffugur.onlineFoodOrdering.dto;
 
 import com.ariffugur.onlineFoodOrdering.model.Category;
 import com.ariffugur.onlineFoodOrdering.model.IngredientsItem;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
 
-
-public record CreateFoodRequest(
-        String name,
-        Long price,
-        String description,
-        Category category,
-        List<String> images,
-        Long restaurantId,
-        boolean vegan,
-        boolean seasonal,
-        List<IngredientsItem> ingredients
-) {
+@Data
+@Builder
+public class CreateFoodRequest {
+    private String name;
+    private Long price;
+    private String description;
+    private Category category;
+    private List<String> images;
+    private Long restaurantId;
+    private boolean vegan;
+    private boolean seasonal;
+    @JsonProperty
+    private List<IngredientsItem> ingredients;
 }
